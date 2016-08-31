@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.github.cluo29.contextdatareading">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA" />
+    <uses-permission android:name="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <permission
+        android:name="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+        android:description="@string/app_name"
+        android:label="Read TestAWAREUI Context data"
+        android:protectionLevel="normal" >
+    </permission>
+    <permission
+        android:name="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"
+        android:description="@string/app_name"
+        android:label="Read TestAWAREUI Context data"
+        android:protectionLevel="normal" >
+    </permission>
+
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <provider android:name="io.github.cluo29.contextdatareading.providers.Battery_Provider"
+            android:authorities="${applicationId}.provider.battery"
+            android:exported="true"
+            android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+            android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
+
+        <provider android:name="io.github.cluo29.contextdatareading.providers.Accelerometer_Provider"
+            android:authorities="${applicationId}.provider.accelerometer"
+            android:exported="true"
+            android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+            android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
+
+        <provider android:name="io.github.cluo29.contextdatareading.providers.Light_Provider"
+            android:authorities="${applicationId}.provider.light"
+            android:exported="true"
+            android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+            android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
+
+        <provider android:name="io.github.cluo29.contextdatareading.providers.AccelerometerFake_Provider"
+            android:authorities="${applicationId}.provider.accelerometerfake"
+            android:exported="true"
+            android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+            android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
+
+        <provider android:name="io.github.cluo29.contextdatareading.providers.TestResult_Provider"
+            android:authorities="${applicationId}.provider.testresult"
+            android:exported="true"
+            android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+            android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
+
+        <provider android:name="io.github.cluo29.contextdatareading.providers.Dataset_Provider"
+            android:authorities="${applicationId}.provider.dataset"
+            android:exported="true"
+            android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+            android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
+
+        <provider android:name="io.github.cluo29.contextdatareading.providers.Replay_Provider"
+            android:authorities="${applicationId}.provider.replay"
+            android:exported="true"
+            android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+            android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
+
+        <service android:name=".AccelerationDataReading" android:exported="true" />
+        <service android:name=".AllSensorDataSending" android:exported="true" />
+        <service android:name=".LightDataReading" android:exported="true" />
+        <service android:name=".AccelerationFakeDataReading" android:exported="true" />
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".DownloadData">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.cluo29.contextdatareading.MainActivity" />
+        </activity>
+
+        <activity android:name=".CreateReplay">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.cluo29.contextdatareading.MainActivity" />
+        </activity>
+
+        <activity android:name=".ScheduleReplay">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.cluo29.contextdatareading.MainActivity" />
+        </activity>
+
+    </application>
+
+</manifest>
