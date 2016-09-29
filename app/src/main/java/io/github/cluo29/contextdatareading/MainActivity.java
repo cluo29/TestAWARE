@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //todo change to manage, create, view results, machine learning, power use, processing speed.
+
                 Intent i = new Intent(getApplicationContext(), CreateReplay.class);
                 startActivity(i);
             }

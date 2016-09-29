@@ -67,12 +67,30 @@
         android:layout_alignStart="@+id/textCreate4"
         android:layout_alignParentEnd="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="4. Ending Timestamp"
+        android:id="@+id/textCreate5"
+        android:layout_below="@+id/editTextCreate1"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="25dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextCreate2"
+        android:layout_below="@+id/textCreate5"
+        android:layout_alignStart="@+id/textCreate5"
+        android:layout_alignParentEnd="true" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
         android:id="@+id/buttonCreate1"
-        android:layout_below="@+id/editTextCreate1"
+        android:layout_below="@+id/editTextCreate2"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

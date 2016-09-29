@@ -265,7 +265,7 @@ public class AllSensorDataSending extends Service {
     public EventsHandler<Battery> battery;
     public EventsHandler<Light> light;
 
-    static private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    static private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);//newSingleThreadScheduledExecutor();
     private List<EventsHandler<? extends AbstractEvent>> allHandlers = new ArrayList<EventsHandler<? extends AbstractEvent>>();
 
     public void start() {
