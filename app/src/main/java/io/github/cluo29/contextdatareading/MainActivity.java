@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 //todo change to manage, create, view results, machine learning, power use, processing speed.
-
-                Intent i = new Intent(getApplicationContext(), CreateReplay.class);
+                //ManageReplay
+                Intent i = new Intent(getApplicationContext(), ManageReplay.class);
                 startActivity(i);
             }
         });
