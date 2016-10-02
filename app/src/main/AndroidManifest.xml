@@ -72,6 +72,12 @@
             android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
             android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
 
+        <provider android:name="io.github.cluo29.contextdatareading.providers.PowerResult_Provider"
+            android:authorities="${applicationId}.provider.powerresult"
+            android:exported="true"
+            android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+            android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
+
         <service android:name=".AccelerationDataReading" android:exported="true" />
         <service android:name=".AllSensorDataSending" android:exported="true" />
         <service android:name=".LightDataReading" android:exported="true" />
@@ -110,6 +116,18 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.cluo29.contextdatareading.MainActivity" />
+        </activity>
+
+        <activity android:name=".ViewReplay">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.cluo29.contextdatareading.ManageReplay" />
+        </activity>
+
+        <activity android:name=".ViewReplayPowerEstimation">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.cluo29.contextdatareading.ViewReplay" />
         </activity>
 
     </application>
