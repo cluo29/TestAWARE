@@ -13,6 +13,7 @@ import io.github.cluo29.contextdatareading.providers.Battery_Provider.*;
 import io.github.cluo29.contextdatareading.table.Accelerometer;
 
 //get an acceleration provider
+import io.github.cluo29.contextdatareading.providers.Audio_Provider.Audio_Result;
 import io.github.cluo29.contextdatareading.providers.Accelerometer_Provider.*;
 import io.github.cluo29.contextdatareading.providers.Light_Provider.Light_Data;
 import io.github.cluo29.contextdatareading.table.Light;
@@ -29,6 +30,7 @@ import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -63,6 +65,70 @@ public class AllSensorDataSending extends Service {
 
         registerReceiver(commandListener, command_filter);
 
+        //for test
+        //sensorList.add("Audio");
+
+        //setSpeed(1000d);
+        //start();
+
+        scheduler.schedule(new Runnable() {
+            public void run() {
+
+
+            //for test
+            File docs = new File(getExternalFilesDir(null)+"/test.wav");
+
+            //file name
+            try {
+
+                final WavFile wavFile = WavFile.openWavFile(docs);
+
+                // Get the number of audio channels in the wav file
+                final int numChannels = wavFile.getNumChannels();
+
+                //final long speedMultiple = Math.round(Math.abs(1d));
+
+                final int bufferSize =  441 * numChannels ;
+
+                final long startTestTime = System.nanoTime();
+
+                Log.d("AUDIO","start at " + startTestTime);
+
+                double[] buffer = new double[bufferSize];
+
+                int framesRead=1;
+                do
+                {
+                    try {
+                        framesRead = wavFile.readFrames(buffer, bufferSize);
+
+                        if(framesRead==0){
+
+                            Log.d("AUDIO","time used " + (System.nanoTime() - startTestTime));
+
+                        }else
+                        {
+
+                            Intent accel_dev = new Intent("ACTION_AUDIO");
+                            accel_dev.putExtra("data", buffer);
+                            sendBroadcast(accel_dev);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.err.println(e);
+                    }
+                }
+                while (framesRead!=0);
+                wavFile.close();
+            }
+            catch (Exception e)
+            {
+                System.err.println(e);
+            }
+
+            }
+        }, 0, TimeUnit.MILLISECONDS);
     }
 
     private CommandListener commandListener = new CommandListener();
@@ -138,6 +204,27 @@ public class AllSensorDataSending extends Service {
                         cursor.close();
                     }
                 }
+
+                if(sensorList.contains("Audio")) {
+                    //query data base   getApplicationContext().getContentResolver().query
+
+
+                    Cursor cursor = getContentResolver().query(Audio_Result.CONTENT_URI, null, null, null, Audio_Result.TIMESTAMP + " ASC LIMIT 1");
+
+                    if (cursor != null && cursor.moveToFirst()) {
+                        Long thisTimestamp = cursor.getLong(cursor.getColumnIndex(Audio_Result.TIMESTAMP));
+                        if(thisTimestamp < startTimestamp)
+                        {
+                            startTimestamp = thisTimestamp;
+                        }
+                        Log.d("UNLOCK", "startTimestamp = " + startTimestamp);
+                    }
+                    if (cursor != null && !cursor.isClosed()) {
+                        cursor.close();
+                    }
+
+                }
+
 
                 setSpeed(intent.getDoubleExtra("speed", 1.0d));
                 start();
@@ -286,12 +373,72 @@ public class AllSensorDataSending extends Service {
             allHandlers.add(light);
         }
 
-        if(allHandlers.size()==0)
+
+
+        if(sensorList.contains("Audio"))
+        {
+            //for test
+
+            //should read from database
+
+            File docs = new File(getExternalFilesDir(null)+"/test.wav");
+
+            //file name
+            try {
+
+                final WavFile wavFile = WavFile.openWavFile(docs);
+
+                // Get the number of audio channels in the wav file
+                final int numChannels = wavFile.getNumChannels();
+
+                final long speedMultiple = Math.round(Math.abs(speed.get()));
+
+                final int bufferSize =  441 * numChannels * (int)speedMultiple;
+
+                final long startTestTime = System.nanoTime();
+
+                Log.d("AUDIO","start at " + startTestTime);
+
+                scheduler.scheduleWithFixedDelay(new Runnable() {
+                    public void run() {
+
+                        double[] buffer = new double[bufferSize];
+
+                        try {
+                            int framesRead = wavFile.readFrames(buffer, 441);
+
+                            if(framesRead==0){
+
+                                Log.d("AUDIO","time used " + (System.nanoTime() - startTestTime));
+
+                                scheduler.shutdownNow();
+                            }else
+                            {
+
+                                Intent accel_dev = new Intent("ACTION_AUDIO");
+                                accel_dev.putExtra("data", buffer);
+                                sendBroadcast(accel_dev);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            System.err.println(e);
+                        }
+                    }
+                }, 0, 10, TimeUnit.MILLISECONDS);
+
+                wavFile.close();
+            }
+            catch (Exception e)
+            {
+                System.err.println(e);
+            }
+        }
+        else if(allHandlers.size()==0)
         {
             return;
         }
-
-        if (hasStarted.compareAndSet(false, true)) {
+        else if (hasStarted.compareAndSet(false, true)) {
             for (final EventsHandler<? extends AbstractEvent> h : allHandlers) {
                 scheduler.schedule(new Runnable() {
                     public void run() {
