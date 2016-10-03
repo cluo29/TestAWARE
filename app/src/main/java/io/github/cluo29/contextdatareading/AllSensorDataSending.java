@@ -70,65 +70,62 @@ public class AllSensorDataSending extends Service {
 
         //setSpeed(1000d);
         //start();
+        //test
+        if(1==0) {
+            scheduler.schedule(new Runnable() {
+                public void run() {
 
-        scheduler.schedule(new Runnable() {
-            public void run() {
 
+                    //for test
+                    File docs = new File(getExternalFilesDir(null) + "/test.wav");
 
-            //for test
-            File docs = new File(getExternalFilesDir(null)+"/test.wav");
-
-            //file name
-            try {
-
-                final WavFile wavFile = WavFile.openWavFile(docs);
-
-                // Get the number of audio channels in the wav file
-                final int numChannels = wavFile.getNumChannels();
-
-                //final long speedMultiple = Math.round(Math.abs(1d));
-
-                final int bufferSize =  441 * numChannels ;
-
-                final long startTestTime = System.nanoTime();
-
-                Log.d("AUDIO","start at " + startTestTime);
-
-                double[] buffer = new double[bufferSize];
-
-                int framesRead=1;
-                do
-                {
+                    //file name
                     try {
-                        framesRead = wavFile.readFrames(buffer, bufferSize);
 
-                        if(framesRead==0){
+                        final WavFile wavFile = WavFile.openWavFile(docs);
 
-                            Log.d("AUDIO","time used " + (System.nanoTime() - startTestTime));
+                        // Get the number of audio channels in the wav file
+                        final int numChannels = wavFile.getNumChannels();
 
-                        }else
-                        {
+                        //final long speedMultiple = Math.round(Math.abs(1d));
 
-                            Intent accel_dev = new Intent("ACTION_AUDIO");
-                            accel_dev.putExtra("data", buffer);
-                            sendBroadcast(accel_dev);
+                        final int bufferSize = 441 * numChannels;
+
+                        final long startTestTime = System.nanoTime();
+
+                        Log.d("AUDIO", "start at " + startTestTime);
+
+                        double[] buffer = new double[bufferSize];
+
+                        int framesRead = 1;
+                        do {
+                            try {
+                                framesRead = wavFile.readFrames(buffer, bufferSize);
+
+                                if (framesRead == 0) {
+
+                                    Log.d("AUDIO", "time used " + (System.nanoTime() - startTestTime));
+
+                                } else {
+
+                                    Intent accel_dev = new Intent("ACTION_AUDIO");
+                                    accel_dev.putExtra("data", buffer);
+                                    sendBroadcast(accel_dev);
+
+                                }
+                            } catch (Exception e) {
+                                System.err.println(e);
+                            }
                         }
-                    }
-                    catch (Exception e)
-                    {
+                        while (framesRead != 0);
+                        wavFile.close();
+                    } catch (Exception e) {
                         System.err.println(e);
                     }
-                }
-                while (framesRead!=0);
-                wavFile.close();
-            }
-            catch (Exception e)
-            {
-                System.err.println(e);
-            }
 
-            }
-        }, 0, TimeUnit.MILLISECONDS);
+                }
+            }, 0, TimeUnit.MILLISECONDS);
+        }
     }
 
     private CommandListener commandListener = new CommandListener();
@@ -157,6 +154,11 @@ public class AllSensorDataSending extends Service {
                 //using the most previous one from DBs
 
                 if(sensorList.contains("Accelerometer")) {
+                    //power sensor name
+                    //
+                    //sensing delay, 2 rows!
+
+
                     //query data base   getApplicationContext().getContentResolver().query
                     Cursor cursor = getContentResolver().query(Accelerometer_Data.CONTENT_URI, null, null, null, Accelerometer_Data.TIMESTAMP + " ASC LIMIT 1");
 
@@ -381,6 +383,7 @@ public class AllSensorDataSending extends Service {
 
             //should read from database
 
+            /*
             File docs = new File(getExternalFilesDir(null)+"/test.wav");
 
             //file name
@@ -433,6 +436,7 @@ public class AllSensorDataSending extends Service {
             {
                 System.err.println(e);
             }
+            */
         }
         else if(allHandlers.size()==0)
         {

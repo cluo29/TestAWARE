@@ -8,14 +8,30 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Power Estimation"
         android:id="@+id/textPE1"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:textSize="33dp" />
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Power Model Selection"
+        android:id="@+id/textPE11"
+        android:padding="16dp"
+        android:layout_below="@+id/textPE1"
+       />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerPE"
+        android:layout_below="@+id/textPE11" />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/listViewPE"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/textPE1"
+        android:layout_below="@+id/spinnerPE"
         />
 
     <TextView

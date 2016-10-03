@@ -78,6 +78,12 @@
             android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
             android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
 
+        <provider android:name="io.github.cluo29.contextdatareading.providers.PowerModel_Provider"
+            android:authorities="${applicationId}.provider.powermodel"
+            android:exported="true"
+            android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+            android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
+
         <provider android:name="io.github.cluo29.contextdatareading.providers.Audio_Provider"
             android:authorities="${applicationId}.provider.audio"
             android:exported="true"
