@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Processing Speed"
+        android:id="@+id/textTime1"
+        android:padding="16dp"
+        android:textSize="33dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Average:"
+        android:id="@+id/textTime2"
+        android:layout_below="@+id/textTime1"
+
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Longest:"
+        android:id="@+id/textTime3"
+
+        android:layout_alignStart="@+id/textTime2"
+        android:layout_below="@+id/textTime2"
+        android:layout_marginTop="15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/textTime4"
+        android:layout_alignTop="@+id/textTime2"
+        android:layout_toEndOf="@+id/textTime2"
+        android:layout_marginLeft="25dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/textTime5"
+        android:layout_alignTop="@+id/textTime3"
+        android:layout_toEndOf="@+id/textTime3"
+        android:layout_marginLeft="25dp" />
+</RelativeLayout>

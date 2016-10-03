@@ -43,6 +43,20 @@ public class ViewReplay extends AppCompatActivity {
         });
 
 
+        Button download2 = (Button) findViewById(R.id.buttonVRR3);
+
+        download2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), ViewReplayTime.class);
+                startActivity(i);
+            }
+        });
+
+
+        //time
+
+
 
     }
 
