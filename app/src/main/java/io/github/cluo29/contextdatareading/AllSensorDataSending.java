@@ -16,7 +16,9 @@ import io.github.cluo29.contextdatareading.table.Accelerometer;
 import io.github.cluo29.contextdatareading.providers.Audio_Provider.Audio_Result;
 import io.github.cluo29.contextdatareading.providers.Accelerometer_Provider.*;
 import io.github.cluo29.contextdatareading.providers.Light_Provider.Light_Data;
+import io.github.cluo29.contextdatareading.table.Event;
 import io.github.cluo29.contextdatareading.table.Light;
+import io.github.cluo29.contextdatareading.providers.Event_Provider.Event_Data;
 
 import android.app.Service;
 
@@ -65,67 +67,14 @@ public class AllSensorDataSending extends Service {
 
         registerReceiver(commandListener, command_filter);
 
+        EventTest();
         //for test
         //sensorList.add("Audio");
 
         //setSpeed(1000d);
         //start();
         //test
-        if(1==0) {
-            scheduler.schedule(new Runnable() {
-                public void run() {
 
-
-                    //for test
-                    File docs = new File(getExternalFilesDir(null) + "/test.wav");
-
-                    //file name
-                    try {
-
-                        final WavFile wavFile = WavFile.openWavFile(docs);
-
-                        // Get the number of audio channels in the wav file
-                        final int numChannels = wavFile.getNumChannels();
-
-                        //final long speedMultiple = Math.round(Math.abs(1d));
-
-                        final int bufferSize = 441 * numChannels;
-
-                        final long startTestTime = System.nanoTime();
-
-                        Log.d("AUDIO", "start at " + startTestTime);
-
-                        double[] buffer = new double[bufferSize];
-
-                        int framesRead = 1;
-                        do {
-                            try {
-                                framesRead = wavFile.readFrames(buffer, bufferSize);
-
-                                if (framesRead == 0) {
-
-                                    Log.d("AUDIO", "time used " + (System.nanoTime() - startTestTime));
-
-                                } else {
-
-                                    Intent accel_dev = new Intent("ACTION_AUDIO");
-                                    accel_dev.putExtra("data", buffer);
-                                    sendBroadcast(accel_dev);
-
-                                }
-                            } catch (Exception e) {
-                                System.err.println(e);
-                            }
-                        }
-                        while (framesRead != 0);
-                        wavFile.close();
-                    } catch (Exception e) {
-                        System.err.println(e);
-                    }
-
-                }
-            }, 0, TimeUnit.MILLISECONDS);
-        }
     }
 
     private CommandListener commandListener = new CommandListener();
@@ -152,6 +101,26 @@ public class AllSensorDataSending extends Service {
 
                 //check sensor list to judge timestamp
                 //using the most previous one from DBs
+                if(sensorList.contains("Event")) {
+                    //power sensor name
+                    //
+                    //sensing delay, 2 rows!
+
+                    //query data base   getApplicationContext().getContentResolver().query
+                    Cursor cursor = getContentResolver().query(Event_Data.CONTENT_URI, null, null, null, Event_Data.TIMESTAMP + " ASC LIMIT 1");
+
+                    if (cursor != null && cursor.moveToFirst()) {
+                        Long thisTimestamp = cursor.getLong(cursor.getColumnIndex(Event_Data.TIMESTAMP));
+                        if(thisTimestamp < startTimestamp)
+                        {
+                            startTimestamp = thisTimestamp;
+                        }
+                        Log.d("UNLOCK", "startTimestamp = " + startTimestamp);
+                    }
+                    if (cursor != null && !cursor.isClosed()) {
+                        cursor.close();
+                    }
+                }
 
                 if(sensorList.contains("Accelerometer")) {
                     //power sensor name
@@ -353,6 +322,7 @@ public class AllSensorDataSending extends Service {
     public EventsHandler<Accelerometer> accelerometer;
     public EventsHandler<Battery> battery;
     public EventsHandler<Light> light;
+    public EventsHandler<Event> event;
 
     static private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);//newSingleThreadScheduledExecutor();
     private List<EventsHandler<? extends AbstractEvent>> allHandlers = new ArrayList<EventsHandler<? extends AbstractEvent>>();
@@ -374,8 +344,10 @@ public class AllSensorDataSending extends Service {
         {
             allHandlers.add(light);
         }
-
-
+        if(sensorList.contains("Event"))
+        {
+            allHandlers.add(event);
+        }
 
         if(sensorList.contains("Audio"))
         {
@@ -555,6 +527,30 @@ public class AllSensorDataSending extends Service {
                 }
             };
         }
+
+        public Source<Event> event() {
+            return new Source<Event>() {
+                public List<Event> apply(int withIdGreaterThan, long withTimestampGreaterEqualTo, int number) {
+                    List<Event> rv = new ArrayList<Event>();
+                    Cursor cursor = getContentResolver().query(Event_Data.CONTENT_URI, null,
+                            Event_Data._ID + " > " + withIdGreaterThan + " AND " + Event_Data.TIMESTAMP + " >= " + withTimestampGreaterEqualTo,
+                            null, Event_Data._ID + " ASC LIMIT " + number);
+                    if (cursor != null) {
+                        while (cursor.moveToNext()) {
+                            rv.add(new Event(
+                                    cursor.getInt(cursor.getColumnIndex(Event_Data._ID)),
+                                    cursor.getLong(cursor.getColumnIndex(Event_Data.TIMESTAMP)),
+                                    UUID.fromString("1"),
+                                    cursor.getString(cursor.getColumnIndex(Event_Data.EVENT))));
+                        }
+                    }
+                    if (cursor != null && !cursor.isClosed()) {
+                        cursor.close();
+                    }
+                    return rv;
+                }
+            };
+        }
 /*
     public Source<Locations> locations() {
         return new Source<Locations>() {
@@ -583,4 +579,103 @@ public class AllSensorDataSending extends Service {
     }
     */
     }
+
+    public void AudioTest(){
+        if(1==0) {
+            scheduler.schedule(new Runnable() {
+                public void run() {
+
+
+                    //for test
+                    File docs = new File(getExternalFilesDir(null) + "/test.wav");
+
+                    //file name
+                    try {
+
+                        final WavFile wavFile = WavFile.openWavFile(docs);
+
+                        // Get the number of audio channels in the wav file
+                        final int numChannels = wavFile.getNumChannels();
+
+                        //final long speedMultiple = Math.round(Math.abs(1d));
+
+                        final int bufferSize = 441 * numChannels;
+
+                        final long startTestTime = System.nanoTime();
+
+                        Log.d("AUDIO", "start at " + startTestTime);
+
+                        double[] buffer = new double[bufferSize];
+
+                        int framesRead = 1;
+                        do {
+                            try {
+                                framesRead = wavFile.readFrames(buffer, bufferSize);
+
+                                if (framesRead == 0) {
+
+                                    Log.d("AUDIO", "time used " + (System.nanoTime() - startTestTime));
+
+                                } else {
+
+                                    Intent accel_dev = new Intent("ACTION_AUDIO");
+                                    accel_dev.putExtra("data", buffer);
+                                    sendBroadcast(accel_dev);
+
+                                }
+                            } catch (Exception e) {
+                                System.err.println(e);
+                            }
+                        }
+                        while (framesRead != 0);
+                        wavFile.close();
+                    } catch (Exception e) {
+                        System.err.println(e);
+                    }
+
+                }
+            }, 0, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    public void EventTest(){
+        Log.d("TESTAWARE","adding event");
+        scheduler.schedule(new Runnable() {
+            public void run() {
+                final long startTestTime = System.nanoTime();
+
+                //add data
+                for(long i=0L; i<100000; i++) {
+                    //add testData
+                    ContentValues data = new ContentValues();
+                    data.put(Event_Data.TIMESTAMP, i);
+                    data.put(Event_Data.EVENT, "ACTION_BATTERY_LOW");
+                    getContentResolver().insert(Event_Data.CONTENT_URI, data);
+                }
+
+
+                /*
+                //testing code
+                Cursor cursor = getContentResolver().query(Event_Data.CONTENT_URI, null,
+                        null,
+                        null, Event_Data._ID + " ASC");
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        String eventToSend = cursor.getString(cursor.getColumnIndex(Event_Data.EVENT));
+                        Intent accel_dev = new Intent(eventToSend);
+                        sendBroadcast(accel_dev);
+                    }
+                }
+                if (cursor != null && !cursor.isClosed()) {
+                    cursor.close();
+                }
+
+                Log.d("TESTAWARE", "time used " + (System.nanoTime() - startTestTime));
+                */
+            }
+        },0, TimeUnit.MILLISECONDS);
+
+        Log.d("TESTAWARE","done event");
+    }
+
 }
