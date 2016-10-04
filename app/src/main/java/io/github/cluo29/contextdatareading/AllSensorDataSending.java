@@ -6,6 +6,7 @@ package io.github.cluo29.contextdatareading;
 
 import io.github.cluo29.contextdatareading.noisiness.*;
 
+import io.github.cluo29.contextdatareading.providers.Accelerometer_Provider;
 import io.github.cluo29.contextdatareading.semantization.parser.*;
 import io.github.cluo29.contextdatareading.table.Battery;
 import io.github.cluo29.contextdatareading.providers.Battery_Provider.*;
@@ -67,14 +68,15 @@ public class AllSensorDataSending extends Service {
 
         registerReceiver(commandListener, command_filter);
 
-        EventTest();
+        //EventTest();
         //for test
         //sensorList.add("Audio");
 
         //setSpeed(1000d);
         //start();
         //test
-
+        //AccTest();
+        AudioTest();
     }
 
     private CommandListener commandListener = new CommandListener();
@@ -581,7 +583,10 @@ public class AllSensorDataSending extends Service {
     }
 
     public void AudioTest(){
-        if(1==0) {
+        Log.d("TESTAWARE","adding audio");
+
+        final int howMany441FrameOnce =100;
+
             scheduler.schedule(new Runnable() {
                 public void run() {
 
@@ -599,7 +604,9 @@ public class AllSensorDataSending extends Service {
 
                         //final long speedMultiple = Math.round(Math.abs(1d));
 
-                        final int bufferSize = 441 * numChannels;
+
+
+                        final int bufferSize = 441 * numChannels*howMany441FrameOnce;
 
                         final long startTestTime = System.nanoTime();
 
@@ -635,26 +642,28 @@ public class AllSensorDataSending extends Service {
 
                 }
             }, 0, TimeUnit.MILLISECONDS);
-        }
+
     }
 
     public void EventTest(){
         Log.d("TESTAWARE","adding event");
+
         scheduler.schedule(new Runnable() {
             public void run() {
                 final long startTestTime = System.nanoTime();
 
+/*
                 //add data
-                for(long i=0L; i<100000; i++) {
+                for(int i=0; i<10000; i++) {
                     //add testData
                     ContentValues data = new ContentValues();
                     data.put(Event_Data.TIMESTAMP, i);
                     data.put(Event_Data.EVENT, "ACTION_BATTERY_LOW");
                     getContentResolver().insert(Event_Data.CONTENT_URI, data);
                 }
+*/
 
 
-                /*
                 //testing code
                 Cursor cursor = getContentResolver().query(Event_Data.CONTENT_URI, null,
                         null,
@@ -671,11 +680,72 @@ public class AllSensorDataSending extends Service {
                 }
 
                 Log.d("TESTAWARE", "time used " + (System.nanoTime() - startTestTime));
-                */
+
             }
         },0, TimeUnit.MILLISECONDS);
 
         Log.d("TESTAWARE","done event");
+    }
+
+
+    public void AccTest(){
+        Log.d("TESTAWARE","adding acc");
+
+        scheduler.schedule(new Runnable() {
+            public void run() {
+                final long startTestTime = System.nanoTime();
+
+                /*
+                ContentValues rowData = new ContentValues();
+        rowData.put(Accelerometer_Provider.Accelerometer_Data._ID, _id);
+        rowData.put(Accelerometer_Provider.Accelerometer_Data.TIMESTAMP, _timestamp);
+        rowData.put(Accelerometer_Provider.Accelerometer_Data.VALUES_0, doubleValues0);
+        rowData.put(Accelerometer_Provider.Accelerometer_Data.VALUES_1, doubleValues1);
+        rowData.put(Accelerometer_Provider.Accelerometer_Data.VALUES_2, doubleValues2);
+        rowData.put(Accelerometer_Provider.Accelerometer_Data.ACCURACY, accuracy);
+        rowData.put(Accelerometer_Provider.Accelerometer_Data.LABEL, label);
+
+        Intent accel_dev = new Intent("ACTION_AWARE_ACCELEROMETER");
+        accel_dev.putExtra("data", rowData);
+                 */
+
+                //testing code
+                Cursor cursor = getContentResolver().query(Accelerometer_Data.CONTENT_URI, null,
+                        null,
+                        null, Accelerometer_Data._ID + " ASC LIMIT 10000");
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+
+                        long _timestamp = cursor.getLong(cursor.getColumnIndex(Accelerometer_Data.TIMESTAMP));
+                        double doubleValues0 = cursor.getDouble(cursor.getColumnIndex(Accelerometer_Data.VALUES_0));
+                        double doubleValues1 = cursor.getDouble(cursor.getColumnIndex(Accelerometer_Data.VALUES_1));
+                        double doubleValues2 = cursor.getDouble(cursor.getColumnIndex(Accelerometer_Data.VALUES_2));
+                        int accuracy = cursor.getInt(cursor.getColumnIndex(Accelerometer_Data.ACCURACY));
+                        String label = cursor.getString(cursor.getColumnIndex(Accelerometer_Data.LABEL));
+
+                        ContentValues rowData = new ContentValues();
+                        rowData.put(Accelerometer_Data.TIMESTAMP, _timestamp);
+                        rowData.put(Accelerometer_Data.VALUES_0, doubleValues0);
+                        rowData.put(Accelerometer_Data.VALUES_1, doubleValues1);
+                        rowData.put(Accelerometer_Data.VALUES_2, doubleValues2);
+                        rowData.put(Accelerometer_Data.ACCURACY, accuracy);
+                        rowData.put(Accelerometer_Data.LABEL, label);
+
+                        Intent accel_dev = new Intent("ACTION_AWARE_ACCELEROMETER");
+                        accel_dev.putExtra("data", rowData);
+                        sendBroadcast(accel_dev);
+                    }
+                }
+                if (cursor != null && !cursor.isClosed()) {
+                    cursor.close();
+                }
+
+                Log.d("TESTAWARE", "time used " + (System.nanoTime() - startTestTime));
+
+            }
+        },0, TimeUnit.MILLISECONDS);
+
+        Log.d("TESTAWARE","done acc");
     }
 
 }
