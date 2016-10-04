@@ -38,7 +38,7 @@ public class TestResult_Provider extends ContentProvider {
         }
 
         public static final Uri CONTENT_URI = Uri.parse("content://"
-                + TestResult_Provider.AUTHORITY + "/testresult");
+                + AUTHORITY + "/testresult");
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.contextdatareading.testresult";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.contextdatareading.testresult";
 

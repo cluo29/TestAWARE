@@ -53,6 +53,15 @@ public class ViewReplay extends AppCompatActivity {
             }
         });
 
+        Button download3 = (Button) findViewById(R.id.buttonVRR1);
+
+        download3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), ViewReplayMachineLearning.class);
+                startActivity(i);
+            }
+        });
 
         //time
 
