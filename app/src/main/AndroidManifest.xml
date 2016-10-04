@@ -148,6 +148,11 @@
                 android:value="io.github.cluo29.contextdatareading.ViewReplay" />
         </activity>
 
+        <activity android:name=".ViewReplayTime">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.cluo29.contextdatareading.ViewReplay" />
+        </activity>
     </application>
 
 </manifest>

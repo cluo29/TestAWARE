@@ -44,9 +44,11 @@ public class ViewReplayTime extends AppCompatActivity {
         longest = (TextView) findViewById(R.id.textTime5);
 
 
-        //addTestData();
+        //test data from targeted app
 
-
+        long max=0L;
+        double sum=0d;
+        long count=0;
         //compute
         Cursor cursor = getContentResolver().query(Time_Result.CONTENT_URI, null, null, null, null);
 
@@ -55,24 +57,33 @@ public class ViewReplayTime extends AppCompatActivity {
             while (cursor.moveToNext()) {
 
                 long timeRow = cursor.getLong(cursor.getColumnIndex(Time_Result.TIME));
-
+                sum = sum + timeRow;
+                count=count+1;
+                if(timeRow>max)
+                {
+                    max = timeRow;
+                }
             }
         }
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
+
+        double avg = sum/count;
+
+        avg = avg/1000;//in us, microsecond
+
+        long avgLong = Math.round(avg);
+
+        sum = sum/1000;//in us, microsecond
+
+        long sumLong = Math.round(sum);
+
+        average.setText(avgLong+ "μs per execution");
+
+        longest.setText(sumLong+ "μs per execution");
+
     }
 
 
-    public void addTestData() {
-
-        long processingTime;
-
-        ContentValues data = new ContentValues();
-        data.put(Time_Result.TIMESTAMP, 1L);
-        data.put(Time_Result.DEVICE_ID, "");
-        //data.put(Time_Result.TIME, processingTime);
-
-        getContentResolver().insert(Time_Result.CONTENT_URI, data);
-    }
 }

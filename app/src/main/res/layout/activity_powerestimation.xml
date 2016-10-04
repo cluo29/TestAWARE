@@ -32,7 +32,7 @@
         android:id="@+id/listViewPE"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/spinnerPE"
-        />
+        android:layout_marginTop="22dp" />
 
     <TextView
         android:layout_width="fill_parent"
