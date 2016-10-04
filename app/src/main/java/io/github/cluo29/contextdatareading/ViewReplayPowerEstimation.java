@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -34,6 +35,9 @@ public class ViewReplayPowerEstimation extends AppCompatActivity {
 
     TextView timerTextView;
     Spinner spinnerSensor;
+    String selectedClass;
+
+    double sum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +48,6 @@ public class ViewReplayPowerEstimation extends AppCompatActivity {
 
         //addTestData();
 
-        displayListViewReplay();
 
         //textPE2
         timerTextView= (TextView) findViewById(R.id.textPE2);
@@ -52,9 +55,54 @@ public class ViewReplayPowerEstimation extends AppCompatActivity {
         loadSpinnerDataSensor();
         //todo display the  power model
         //check the current one
-        //then display the list
-        //then sum up
-        //timerTextView.setText("mAh per hour");
+
+        spinnerSensor.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+                        selectedClass=spinnerSensor.getSelectedItem().toString();
+                        //then display the list
+
+                        displayListViewReplay();
+
+                        sum =0;
+
+                        Cursor cursor = getContentResolver().query(Power_Result.CONTENT_URI, null,
+                                Power_Result.DEVICE_ID +" = '"+selectedClass+"'", null, Power_Result._ID + " ASC");
+
+
+                        if (cursor != null) {
+                            while (cursor.moveToNext()) {
+                                String sensorRow = cursor.getString(cursor.getColumnIndex(Power_Result.POWER));
+
+                                int mPosition = sensorRow.indexOf("m");
+
+                                String number = sensorRow.substring(0,mPosition);
+
+                                sum=sum+Double.parseDouble(number);
+                            }
+                        }
+                        if (cursor != null && !cursor.isClosed())
+                        {
+                            cursor.close();
+                        }
+                        //then sum up
+                        //timerTextView.setText();
+
+                        String displaySum = "Total Power Use:" +String.format( "%.3f", sum ) + "mAh per hour";
+                        timerTextView.setText(displaySum);
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // your code here
+                    }
+                }
+        );
+
+
 
     }
 
@@ -62,6 +110,24 @@ public class ViewReplayPowerEstimation extends AppCompatActivity {
 
 
 
+        ContentValues data0 = new ContentValues();
+        data0.put(PowerModel_Result.TIMESTAMP, 3L);
+        data0.put(PowerModel_Result.DEVICE_NAME, "XT1079");
+        data0.put(PowerModel_Result.SENSOR, "Accelerometer");
+        data0.put(PowerModel_Result.SPEED, "Normal");
+        data0.put(PowerModel_Result.VALUE, "0.13mAh per hour");
+        getContentResolver().insert(PowerModel_Result.CONTENT_URI, data0);
+
+
+        ContentValues data01 = new ContentValues();
+        data01.put(PowerModel_Result.TIMESTAMP, 4L);
+        data01.put(PowerModel_Result.DEVICE_NAME, "XT1079");
+        data01.put(PowerModel_Result.SENSOR, "Light");
+        data01.put(PowerModel_Result.SPEED, "Normal");
+        data01.put(PowerModel_Result.VALUE, "0.175mAh per hour");
+        getContentResolver().insert(PowerModel_Result.CONTENT_URI, data01);
+
+/*
         ContentValues data0 = new ContentValues();
         data0.put(PowerModel_Result.TIMESTAMP, 1L);
         data0.put(PowerModel_Result.DEVICE_NAME, "Nexus 5");
@@ -79,6 +145,7 @@ public class ViewReplayPowerEstimation extends AppCompatActivity {
         data01.put(PowerModel_Result.VALUE, "0.175mAh per hour");
         getContentResolver().insert(PowerModel_Result.CONTENT_URI, data01);
 
+*/
 
         Log.d("Plot"," 73");
         /*
@@ -115,15 +182,15 @@ public class ViewReplayPowerEstimation extends AppCompatActivity {
     public void addTestData(){
         ContentValues data = new ContentValues();
         data.put(Power_Result.TIMESTAMP, 1L);
-        data.put(Power_Result.DEVICE_ID, "Nexus 5");
+        data.put(Power_Result.DEVICE_ID, "XT1079");
         data.put(Power_Result.SENSOR, "Accelerometer");
         data.put(Power_Result.DELAY, "Normal");
-        data.put(Power_Result.POWER, "0.4mAh per hour");
+        data.put(Power_Result.POWER, "0.13mAh per hour");
         getContentResolver().insert(Power_Result.CONTENT_URI, data);
 
         ContentValues data2 = new ContentValues();
         data2.put(Power_Result.TIMESTAMP, 2L);
-        data2.put(Power_Result.DEVICE_ID, "Nexus 5");
+        data2.put(Power_Result.DEVICE_ID, "XT1079");
         data2.put(Power_Result.SENSOR, "Light");
         data2.put(Power_Result.DELAY, "Normal");
         data2.put(Power_Result.POWER, "0.175mAh per hour");
@@ -135,7 +202,7 @@ public class ViewReplayPowerEstimation extends AppCompatActivity {
     public void displayListViewReplay(){
         //dataAdapterReplay
         Cursor cursor = getContentResolver().query(Power_Result.CONTENT_URI, null,
-                null, null, Power_Result._ID + " ASC");
+                Power_Result.DEVICE_ID +" = '"+selectedClass+"'", null, Power_Result._ID + " ASC");
         if (cursor != null) {
             cursor.moveToFirst();
         }
@@ -158,6 +225,7 @@ public class ViewReplayPowerEstimation extends AppCompatActivity {
 
         ListView listView = (ListView) findViewById(R.id.listViewPE);
         listView.setAdapter(dataAdapterReplay);
+
     }
 
 
