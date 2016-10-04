@@ -585,18 +585,16 @@ public class AllSensorDataSending extends Service {
     public void AudioTest(){
         Log.d("TESTAWARE","adding audio");
 
-        final int howMany441FrameOnce =100;
+        final int howMany441FrameOnce =1;
 
             scheduler.schedule(new Runnable() {
                 public void run() {
-
 
                     //for test
                     File docs = new File(getExternalFilesDir(null) + "/test.wav");
 
                     //file name
                     try {
-
                         final WavFile wavFile = WavFile.openWavFile(docs);
 
                         // Get the number of audio channels in the wav file
@@ -605,12 +603,13 @@ public class AllSensorDataSending extends Service {
                         //final long speedMultiple = Math.round(Math.abs(1d));
 
 
+                        final int bufferSize = 441 * numChannels * howMany441FrameOnce;
 
-                        final int bufferSize = 441 * numChannels*howMany441FrameOnce;
+
 
                         final long startTestTime = System.nanoTime();
 
-                        Log.d("AUDIO", "start at " + startTestTime);
+                        Log.d("TESTAWARE", "start at " + startTestTime);
 
                         double[] buffer = new double[bufferSize];
 
@@ -621,7 +620,7 @@ public class AllSensorDataSending extends Service {
 
                                 if (framesRead == 0) {
 
-                                    Log.d("AUDIO", "time used " + (System.nanoTime() - startTestTime));
+                                    Log.d("TESTAWARE", "time used " + (System.nanoTime() - startTestTime));
 
                                 } else {
 
