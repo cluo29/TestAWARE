@@ -76,7 +76,7 @@ public class AllSensorDataSending extends Service {
         //start();
         //test
         //AccTest();
-        AudioTest();
+        //AudioTest();
     }
 
     private CommandListener commandListener = new CommandListener();
@@ -326,10 +326,11 @@ public class AllSensorDataSending extends Service {
     public EventsHandler<Light> light;
     public EventsHandler<Event> event;
 
-    static private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);//newSingleThreadScheduledExecutor();
+    static private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(12);//newSingleThreadScheduledExecutor();
     private List<EventsHandler<? extends AbstractEvent>> allHandlers = new ArrayList<EventsHandler<? extends AbstractEvent>>();
 
     public void start() {
+
 
         //check sensor list
         if(sensorList.contains("Accelerometer"))

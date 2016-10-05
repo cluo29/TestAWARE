@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Set Speed (e.g., 1.5)"
+        android:text="Set Speed (e.g., 2.0)"
         android:id="@+id/textViewSchedule2"
         android:layout_above="@+id/editTextSchedule"
         android:layout_alignStart="@+id/textSchedule1"
