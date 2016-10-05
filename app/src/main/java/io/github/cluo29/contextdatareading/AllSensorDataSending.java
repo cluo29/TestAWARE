@@ -214,7 +214,10 @@ public class AllSensorDataSending extends Service {
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(commandListener);
+
     }
+
 
     //no listener needed
     //// TODO: 16/08/16  /
@@ -432,11 +435,14 @@ public class AllSensorDataSending extends Service {
 
     public void stop() {
         scheduler.shutdownNow();
+        scheduler = Executors.newScheduledThreadPool(12);//newSingleThreadScheduledExecutor();
+        allHandlers = new ArrayList<EventsHandler<? extends AbstractEvent>>();
+        hasStarted = new AtomicBoolean(false);
     }
 
     public long startTimestamp = Long.MAX_VALUE;
     private AtomicReference<Double> speed = new AtomicReference<Double>(1.0);
-    final private AtomicBoolean hasStarted = new AtomicBoolean(false);
+    private AtomicBoolean hasStarted = new AtomicBoolean(false);
 
     //how to make getContentResolver work.... so i copy all shit here.
 
