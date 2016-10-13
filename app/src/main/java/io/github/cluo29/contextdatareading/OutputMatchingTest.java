@@ -21,6 +21,7 @@ import io.github.cluo29.contextdatareading.table.Event;
 import io.github.cluo29.contextdatareading.table.Light;
 import io.github.cluo29.contextdatareading.providers.Event_Provider.Event_Data;
 import io.github.cluo29.contextdatareading.providers.ESM_Provider.ESM_Result;
+import io.github.cluo29.contextdatareading.providers.Screen_Provider.Screen_Result;
 
 import android.app.Service;
 
@@ -72,6 +73,7 @@ public class OutputMatchingTest extends Service {
         //setSpeed(1000d);
         //start();
 
+        /*
         Cursor cursor = getContentResolver().query(ESM_Result.CONTENT_URI, null, null, null, ESM_Result.TIMESTAMP + " ASC LIMIT 1");
 
         if (cursor != null && cursor.moveToFirst()) {
@@ -85,7 +87,20 @@ public class OutputMatchingTest extends Service {
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
+*/
+        Cursor cursor = getContentResolver().query(Screen_Result.CONTENT_URI, null, null, null, Screen_Result.TIMESTAMP + " ASC LIMIT 1");
 
+        if (cursor != null && cursor.moveToFirst()) {
+            Long thisTimestamp = cursor.getLong(cursor.getColumnIndex(Screen_Result.TIMESTAMP));
+            if(thisTimestamp < startTimestamp)
+            {
+                startTimestamp = thisTimestamp;
+            }
+            Log.d("UNLOCK", "startTimestamp = " + startTimestamp);
+        }
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
 
     }
 
@@ -187,10 +202,6 @@ public class OutputMatchingTest extends Service {
 
     }
 
-
-    //no listener needed
-    //// TODO: 16/08/16  /
-    //make acc into T
 
 
     public final class EventsHandler<T extends AbstractEvent> {
