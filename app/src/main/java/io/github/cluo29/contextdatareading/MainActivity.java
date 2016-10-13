@@ -73,55 +73,12 @@ public class MainActivity extends AppCompatActivity {
         //startService(new Intent(MainActivity.this, AccelerationDataReading.class));
 
         //start the datasending service
-        startService(new Intent(MainActivity.this, AllSensorDataSending.class));
+        //speed test
+        //startService(new Intent(MainActivity.this, AllSensorDataSending.class));
 
-        //use Dummy to create
-        //startService(new Intent(MainActivity.this, LightDataReading.class));
+        //output match test
+        startService(new Intent(MainActivity.this, OutputMatchingTest.class));
 
-        //startService(new Intent(MainActivity.this, AccelerationFakeDataReading.class));
-
-
-        /*
-        ContentValues rowData = new ContentValues();  //System.currentTimeMillis());  1470404312165L
-        rowData.put(Dataset_Info.TIMESTAMP, System.currentTimeMillis());
-        rowData.put(Dataset_Info.APPNAME, "Fall Detection"); //Accelerometer
-        rowData.put(Dataset_Info.SENSOR, "Locations");
-        rowData.put(Dataset_Info.HOST, "awareframework.com");
-        rowData.put(Dataset_Info.PORT, 3306);
-        rowData.put(Dataset_Info.USER, "Hater");
-        rowData.put(Dataset_Info.PASSWORD, "Hater");
-        rowData.put(Dataset_Info.DATABASE, "Hater");
-        rowData.put(Dataset_Info.STARTTIMESTAMP, 1470404312165L);
-        rowData.put(Dataset_Info.DEVICE, "d9a6bd96-5c8c-40fe-8acf-39ba083be22e");
-        getApplicationContext().getContentResolver().insert(Dataset_Info.CONTENT_URI, rowData);
-*/
-
-        /*
-        ContentValues rowData = new ContentValues();  //System.currentTimeMillis());  1470404312165L
-        rowData.put(Dataset_Info.TIMESTAMP, System.currentTimeMillis());
-        rowData.put(Dataset_Info.APPNAME, "App in Session");
-        rowData.put(Dataset_Info.SENSOR, "Applications");
-        rowData.put(Dataset_Info.HOST, "awareframework.com");
-        rowData.put(Dataset_Info.PORT, 3306);
-        rowData.put(Dataset_Info.USER, "Hater");
-        rowData.put(Dataset_Info.PASSWORD, "Hater");
-        rowData.put(Dataset_Info.DATABASE, "Hater");
-        rowData.put(Dataset_Info.STARTTIMESTAMP, 1470404312165L);
-        rowData.put(Dataset_Info.DEVICE, "d9a6bd96-5c8c-40fe-8acf-39ba083be22e");
-        getApplicationContext().getContentResolver().insert(Dataset_Info.CONTENT_URI, rowData);
-        */
-        /*
-
-                ContentValues rowData = new ContentValues();
-                rowData.put(Replay_Info.TIMESTAMP, System.currentTimeMillis());
-                rowData.put(Replay_Info.APPNAME, "Fall Detection");
-                rowData.put(Replay_Info.SENSOR, "Locations");  //Locations  Accelerometer
-                rowData.put(Replay_Info.DATASET, "");
-                rowData.put(Replay_Info.STARTTIMESTAMP, 1470404312165L);
-                rowData.put(Replay_Info.SCHEDULE, 0);
-                rowData.put(Replay_Info.STATUS, "pending");
-                getApplicationContext().getContentResolver().insert(Replay_Info.CONTENT_URI, rowData);
-                */
 
     }
 

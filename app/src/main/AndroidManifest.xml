@@ -102,10 +102,17 @@
             android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
             android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
 
+        <provider android:name="io.github.cluo29.contextdatareading.providers.ESM_Provider"
+            android:authorities="${applicationId}.provider.esm"
+            android:exported="true"
+            android:readPermission="io.github.cluo29.contextdatareading.READ_CONTEXT_DATA"
+            android:writePermission="io.github.cluo29.contextdatareading.WRITE_CONTEXT_DATA"/>
+
         <service android:name=".AccelerationDataReading" android:exported="true" />
         <service android:name=".AllSensorDataSending" android:exported="true" />
         <service android:name=".LightDataReading" android:exported="true" />
         <service android:name=".AccelerationFakeDataReading" android:exported="true" />
+        <service android:name=".OutputMatchingTest" android:exported="true" />
 
         <activity
             android:name=".MainActivity"

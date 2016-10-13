@@ -1,7 +1,7 @@
 package io.github.cluo29.contextdatareading;
 
 /**
- * Created by Comet on 05/08/16.
+ * Created by Comet on 13/10/16.
  */
 
 import io.github.cluo29.contextdatareading.noisiness.*;
@@ -20,6 +20,7 @@ import io.github.cluo29.contextdatareading.providers.Light_Provider.Light_Data;
 import io.github.cluo29.contextdatareading.table.Event;
 import io.github.cluo29.contextdatareading.table.Light;
 import io.github.cluo29.contextdatareading.providers.Event_Provider.Event_Data;
+import io.github.cluo29.contextdatareading.providers.ESM_Provider.ESM_Result;
 
 import android.app.Service;
 
@@ -50,7 +51,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AllSensorDataSending extends Service {
+public class OutputMatchingTest extends Service {
 
     ArrayList<String> sensorList;
     @Override
@@ -68,15 +69,24 @@ public class AllSensorDataSending extends Service {
 
         registerReceiver(commandListener, command_filter);
 
-        //EventTest();
-        //for test
-        //sensorList.add("Audio");
-
         //setSpeed(1000d);
         //start();
-        //test
-        //AccTest();
-        AudioTest();
+
+        Cursor cursor = getContentResolver().query(ESM_Result.CONTENT_URI, null, null, null, ESM_Result.TIMESTAMP + " ASC LIMIT 1");
+
+        if (cursor != null && cursor.moveToFirst()) {
+            Long thisTimestamp = cursor.getLong(cursor.getColumnIndex(ESM_Result.TIMESTAMP));
+            if(thisTimestamp < startTimestamp)
+            {
+                startTimestamp = thisTimestamp;
+            }
+            Log.d("UNLOCK", "startTimestamp = " + startTimestamp);
+        }
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+
+
     }
 
     private CommandListener commandListener = new CommandListener();
@@ -102,27 +112,6 @@ public class AllSensorDataSending extends Service {
                 light = new EventsHandler<Light>("Light", dataSource.light());
 
                 //check sensor list to judge timestamp
-                //using the most previous one from DBs
-                if(sensorList.contains("Event")) {
-                    //power sensor name
-                    //
-                    //sensing delay, 2 rows!
-
-                    //query data base   getApplicationContext().getContentResolver().query
-                    Cursor cursor = getContentResolver().query(Event_Data.CONTENT_URI, null, null, null, Event_Data.TIMESTAMP + " ASC LIMIT 1");
-
-                    if (cursor != null && cursor.moveToFirst()) {
-                        Long thisTimestamp = cursor.getLong(cursor.getColumnIndex(Event_Data.TIMESTAMP));
-                        if(thisTimestamp < startTimestamp)
-                        {
-                            startTimestamp = thisTimestamp;
-                        }
-                        Log.d("UNLOCK", "startTimestamp = " + startTimestamp);
-                    }
-                    if (cursor != null && !cursor.isClosed()) {
-                        cursor.close();
-                    }
-                }
 
                 if(sensorList.contains("Accelerometer")) {
                     //power sensor name
@@ -178,26 +167,6 @@ public class AllSensorDataSending extends Service {
                     }
                 }
 
-                if(sensorList.contains("Audio")) {
-                    //query data base   getApplicationContext().getContentResolver().query
-
-
-                    Cursor cursor = getContentResolver().query(Audio_Result.CONTENT_URI, null, null, null, Audio_Result.TIMESTAMP + " ASC LIMIT 1");
-
-                    if (cursor != null && cursor.moveToFirst()) {
-                        Long thisTimestamp = cursor.getLong(cursor.getColumnIndex(Audio_Result.TIMESTAMP));
-                        if(thisTimestamp < startTimestamp)
-                        {
-                            startTimestamp = thisTimestamp;
-                        }
-                        Log.d("UNLOCK", "startTimestamp = " + startTimestamp);
-                    }
-                    if (cursor != null && !cursor.isClosed()) {
-                        cursor.close();
-                    }
-
-                }
-
 
                 setSpeed(intent.getDoubleExtra("speed", 1.0d));
                 start();
@@ -249,38 +218,6 @@ public class AllSensorDataSending extends Service {
                 for (final T next : nexts) {
                     buffer.put(next);
                 }
-
-                /*
-                if(myType.equals("Accelerometer")) {
-                    Cursor cursor = getContentResolver().query(Accelerometer_Data.CONTENT_URI, null,
-                            Accelerometer_Data._ID + " > " + lastId.get() + " AND " + Accelerometer_Data.TIMESTAMP + " >= " + startTimestamp,
-                            null, Accelerometer_Data._ID + " ASC LIMIT " + number);
-
-                    if (cursor != null) {
-                        while (cursor.moveToNext()) {
-                            buffer.put();
-                        }
-                    }
-                    if (cursor != null && !cursor.isClosed()) {
-                        cursor.close();
-                    }
-                    return;
-                }
-                if(myType.equals("Battery")) {
-                    Cursor cursor = getContentResolver().query(Battery_Data.CONTENT_URI, null,
-                            Battery_Data._ID + " > " + lastId.get() + " AND " + Battery_Data.TIMESTAMP + " >= " + startTimestamp,
-                            null, Battery_Data._ID + " ASC LIMIT " + number);
-
-                    if (cursor != null) {
-                        while (cursor.moveToNext()) {
-                            buffer.put();
-                        }
-                    }
-                    if (cursor != null && !cursor.isClosed()) {
-                        cursor.close();
-                    }
-
-                */
 
 
             }
@@ -355,72 +292,7 @@ public class AllSensorDataSending extends Service {
             allHandlers.add(event);
         }
 
-        if(sensorList.contains("Audio"))
-        {
-            //for test
-
-            //should read from database
-
-            /*
-            File docs = new File(getExternalFilesDir(null)+"/test.wav");
-
-            //file name
-            try {
-
-                final WavFile wavFile = WavFile.openWavFile(docs);
-
-                // Get the number of audio channels in the wav file
-                final int numChannels = wavFile.getNumChannels();
-
-                final long speedMultiple = Math.round(Math.abs(speed.get()));
-
-                final int bufferSize =  441 * numChannels * (int)speedMultiple;
-
-                final long startTestTime = System.nanoTime();
-
-                Log.d("AUDIO","start at " + startTestTime);
-
-                scheduler.scheduleWithFixedDelay(new Runnable() {
-                    public void run() {
-
-                        double[] buffer = new double[bufferSize];
-
-                        try {
-                            int framesRead = wavFile.readFrames(buffer, 441);
-
-                            if(framesRead==0){
-
-                                Log.d("AUDIO","time used " + (System.nanoTime() - startTestTime));
-
-                                scheduler.shutdownNow();
-                            }else
-                            {
-
-                                Intent accel_dev = new Intent("ACTION_AUDIO");
-                                accel_dev.putExtra("data", buffer);
-                                sendBroadcast(accel_dev);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            System.err.println(e);
-                        }
-                    }
-                }, 0, 10, TimeUnit.MILLISECONDS);
-
-                wavFile.close();
-            }
-            catch (Exception e)
-            {
-                System.err.println(e);
-            }
-            */
-        }
-        else if(allHandlers.size()==0)
-        {
-            return;
-        }
-        else if (hasStarted.compareAndSet(false, true)) {
+        if (hasStarted.compareAndSet(false, true)) {
             for (final EventsHandler<? extends AbstractEvent> h : allHandlers) {
                 scheduler.schedule(new Runnable() {
                     public void run() {
@@ -452,7 +324,7 @@ public class AllSensorDataSending extends Service {
 
         public Source<Battery> battery() {
             return new Source<Battery>() {
-                public List<Battery> apply( int withIdGreaterThan, long withTimestampGreaterEqualTo, int number) {
+                public List<Battery> apply(int withIdGreaterThan, long withTimestampGreaterEqualTo, int number) {
                     List<Battery> rv = new ArrayList<Battery>();
                     Cursor cursor = getContentResolver().query(Battery_Data.CONTENT_URI, null,
                             Battery_Data._ID + " > " + withIdGreaterThan + " AND " + Battery_Data.TIMESTAMP + " >= " + withTimestampGreaterEqualTo,
@@ -485,7 +357,7 @@ public class AllSensorDataSending extends Service {
 
         public Source<Accelerometer> accelerometer() {
             return new Source<Accelerometer>() {
-                public List<Accelerometer> apply( int withIdGreaterThan, long withTimestampGreaterEqualTo, int number) {
+                public List<Accelerometer> apply(int withIdGreaterThan, long withTimestampGreaterEqualTo, int number) {
                     List<Accelerometer> rv = new ArrayList<Accelerometer>();
                     Cursor cursor = getContentResolver().query(Accelerometer_Data.CONTENT_URI, null,
                             Accelerometer_Data._ID + " > " + withIdGreaterThan + " AND " + Accelerometer_Data.TIMESTAMP + " >= " + withTimestampGreaterEqualTo,
@@ -560,205 +432,7 @@ public class AllSensorDataSending extends Service {
                 }
             };
         }
-/*
-    public Source<Locations> locations() {
-        return new Source<Locations>() {
-            public List<Locations> apply( int withIdGreaterThan, long withTimestampGreaterEqualTo, int number) {
-                List<Locations> rv = new ArrayList<Locations>();
-                try{
-                    ResultSet result = query("locations", device, withIdGreaterThan, withTimestampGreaterEqualTo, number);
-                    while (result.next()) {
-                        rv.add(new Locations(
-                                result.getInt("_id"),
-                                result.getLong("timestamp"),
-                                UUID.fromString(result.getString("device_id")),
-                                result.getDouble("double_latitude"),
-                                result.getDouble("double_longitude"),
-                                result.getDouble("double_bearing"),
-                                result.getDouble("double_speed"),
-                                result.getDouble("double_altitude"),
-                                result.getString("provider"),
-                                result.getDouble("accuracy"),
-                                result.getString("label")));
-                    }
-                } catch (SQLException e) { e.printStackTrace(); }
-                return rv;
-            }
-        };
-    }
-    */
     }
 
-    public void AudioTest(){
-        Log.d("TESTAWARE","adding audio");
-
-        final int howMany441FrameOnce =1;
-
-            scheduler.schedule(new Runnable() {
-                public void run() {
-
-                    //for test
-                    File docs = new File(getExternalFilesDir(null) + "/test.wav");
-
-                    //file name
-                    try {
-                        final WavFile wavFile = WavFile.openWavFile(docs);
-
-                        // Get the number of audio channels in the wav file
-                        final int numChannels = wavFile.getNumChannels();
-
-                        //final long speedMultiple = Math.round(Math.abs(1d));
-
-
-                        final int bufferSize = 441 * numChannels * howMany441FrameOnce;
-
-
-
-                        final long startTestTime = System.nanoTime();
-
-                        Log.d("TESTAWARE", "start at " + startTestTime);
-
-                        double[] buffer = new double[bufferSize];
-
-                        int framesRead = 1;
-                        do {
-                            try {
-                                framesRead = wavFile.readFrames(buffer, bufferSize);
-
-                                if (framesRead == 0) {
-
-                                    Log.d("TESTAWARE", "time used " + (System.nanoTime() - startTestTime));
-
-                                } else {
-
-                                    Intent accel_dev = new Intent("ACTION_AUDIO");
-                                    accel_dev.putExtra("data", buffer);
-                                    sendBroadcast(accel_dev);
-
-                                }
-                            } catch (Exception e) {
-                                System.err.println(e);
-                            }
-                        }
-                        while (framesRead != 0);
-                        wavFile.close();
-                    } catch (Exception e) {
-                        System.err.println(e);
-                    }
-
-                }
-            }, 0, TimeUnit.MILLISECONDS);
-
-    }
-
-    public void EventTest(){
-        Log.d("TESTAWARE","adding event");
-
-        scheduler.schedule(new Runnable() {
-            public void run() {
-                final long startTestTime = System.nanoTime();
-
-/*
-                //add data
-                for(int i=0; i<10000; i++) {
-                    //add testData
-                    ContentValues data = new ContentValues();
-                    data.put(Event_Data.TIMESTAMP, i);
-                    data.put(Event_Data.EVENT, "ACTION_BATTERY_LOW");
-                    getContentResolver().insert(Event_Data.CONTENT_URI, data);
-                }
-*/
-
-
-                //testing code
-                Cursor cursor = getContentResolver().query(Event_Data.CONTENT_URI, null,
-                        null,
-                        null, Event_Data._ID + " ASC");
-                if (cursor != null) {
-                    while (cursor.moveToNext()) {
-                        String eventToSend = cursor.getString(cursor.getColumnIndex(Event_Data.EVENT));
-                        Intent accel_dev = new Intent(eventToSend);
-                        sendBroadcast(accel_dev);
-                    }
-                }
-
-
-                Log.d("TESTAWARE", "event time used " + (System.nanoTime() - startTestTime));
-
-                Log.d("TESTAWARE", "event"+ cursor.getCount());
-
-                if (cursor != null && !cursor.isClosed()) {
-                    cursor.close();
-                }
-
-            }
-        },0, TimeUnit.MILLISECONDS);
-
-        Log.d("TESTAWARE","done event");
-    }
-
-
-    public void AccTest(){
-        Log.d("TESTAWARE","adding acc");
-
-        scheduler.schedule(new Runnable() {
-            public void run() {
-                final long startTestTime = System.nanoTime();
-
-                /*
-                ContentValues rowData = new ContentValues();
-        rowData.put(Accelerometer_Provider.Accelerometer_Data._ID, _id);
-        rowData.put(Accelerometer_Provider.Accelerometer_Data.TIMESTAMP, _timestamp);
-        rowData.put(Accelerometer_Provider.Accelerometer_Data.VALUES_0, doubleValues0);
-        rowData.put(Accelerometer_Provider.Accelerometer_Data.VALUES_1, doubleValues1);
-        rowData.put(Accelerometer_Provider.Accelerometer_Data.VALUES_2, doubleValues2);
-        rowData.put(Accelerometer_Provider.Accelerometer_Data.ACCURACY, accuracy);
-        rowData.put(Accelerometer_Provider.Accelerometer_Data.LABEL, label);
-
-        Intent accel_dev = new Intent("ACTION_AWARE_ACCELEROMETER");
-        accel_dev.putExtra("data", rowData);
-                 */
-
-                //testing code
-                Cursor cursor = getContentResolver().query(Accelerometer_Data.CONTENT_URI, null,
-                        null,
-                        null, Accelerometer_Data._ID + " ASC LIMIT 10000");
-                if (cursor != null) {
-                    while (cursor.moveToNext()) {
-
-                        long _timestamp = cursor.getLong(cursor.getColumnIndex(Accelerometer_Data.TIMESTAMP));
-                        double doubleValues0 = cursor.getDouble(cursor.getColumnIndex(Accelerometer_Data.VALUES_0));
-                        double doubleValues1 = cursor.getDouble(cursor.getColumnIndex(Accelerometer_Data.VALUES_1));
-                        double doubleValues2 = cursor.getDouble(cursor.getColumnIndex(Accelerometer_Data.VALUES_2));
-                        int accuracy = cursor.getInt(cursor.getColumnIndex(Accelerometer_Data.ACCURACY));
-                        String label = cursor.getString(cursor.getColumnIndex(Accelerometer_Data.LABEL));
-
-                        ContentValues rowData = new ContentValues();
-                        rowData.put(Accelerometer_Data.TIMESTAMP, _timestamp);
-                        rowData.put(Accelerometer_Data.VALUES_0, doubleValues0);
-                        rowData.put(Accelerometer_Data.VALUES_1, doubleValues1);
-                        rowData.put(Accelerometer_Data.VALUES_2, doubleValues2);
-                        rowData.put(Accelerometer_Data.ACCURACY, accuracy);
-                        rowData.put(Accelerometer_Data.LABEL, label);
-
-                        Intent accel_dev = new Intent("ACTION_AWARE_ACCELEROMETER");
-                        accel_dev.putExtra("data", rowData);
-                        sendBroadcast(accel_dev);
-                    }
-                }
-
-                Log.d("TESTAWARE", "acc time used " + (System.nanoTime() - startTestTime));
-
-                Log.d("TESTAWARE", "acc"+ cursor.getCount());
-
-                if (cursor != null && !cursor.isClosed()) {
-                    cursor.close();
-                }
-
-            }
-        },0, TimeUnit.MILLISECONDS);
-
-        Log.d("TESTAWARE","done acc");
-    }
 
 }
