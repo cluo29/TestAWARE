@@ -88,6 +88,7 @@ public class OutputMatchingTest extends Service {
             cursor.close();
         }
 */
+        /*
         Cursor cursor = getContentResolver().query(Screen_Result.CONTENT_URI, null, null, null, Screen_Result.TIMESTAMP + " ASC LIMIT 1");
 
         if (cursor != null && cursor.moveToFirst()) {
@@ -101,6 +102,8 @@ public class OutputMatchingTest extends Service {
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
+*/
+
 
     }
 
