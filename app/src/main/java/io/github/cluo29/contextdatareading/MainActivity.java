@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         displayListViewDataset();
         displayListViewReplay();
 
-        Log.d("UNLOCK", "GOING");
+        Log.d("TESTAWARE", "GOING");
 
         //start data reading
         //startService(new Intent(MainActivity.this, BatteryDataReading.class));
@@ -74,10 +74,11 @@ public class MainActivity extends AppCompatActivity {
 
         //start the datasending service
         //speed test
-        //startService(new Intent(MainActivity.this, AllSensorDataSending.class));
+
+        startService(new Intent(MainActivity.this, AllSensorDataSending.class));
 
         //output match test
-        startService(new Intent(MainActivity.this, OutputMatchingTest.class));
+        //startService(new Intent(MainActivity.this, OutputMatchingTest.class));
 
 
     }

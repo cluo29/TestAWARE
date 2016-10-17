@@ -68,13 +68,14 @@ public class AllSensorDataSending extends Service {
 
         registerReceiver(commandListener, command_filter);
 
-        //EventTest();
+
         //for test
         //sensorList.add("Audio");
 
         //setSpeed(1000d);
         //start();
         //test
+        //EventTest();
         //AccTest();
         AudioTest();
     }
@@ -329,7 +330,7 @@ public class AllSensorDataSending extends Service {
     public EventsHandler<Light> light;
     public EventsHandler<Event> event;
 
-    static private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(12);//newSingleThreadScheduledExecutor();
+    static private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);//newSingleThreadScheduledExecutor();
     private List<EventsHandler<? extends AbstractEvent>> allHandlers = new ArrayList<EventsHandler<? extends AbstractEvent>>();
 
     public void start() {
@@ -435,7 +436,7 @@ public class AllSensorDataSending extends Service {
 
     public void stop() {
         scheduler.shutdownNow();
-        scheduler = Executors.newScheduledThreadPool(12);//newSingleThreadScheduledExecutor();
+        scheduler = Executors.newScheduledThreadPool(1);//newSingleThreadScheduledExecutor();
         allHandlers = new ArrayList<EventsHandler<? extends AbstractEvent>>();
         hasStarted = new AtomicBoolean(false);
     }
