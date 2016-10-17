@@ -77,7 +77,7 @@ public class AllSensorDataSending extends Service {
         //test
         //EventTest();
         //AccTest();
-        AudioTest();
+        //AudioTest();
     }
 
     private CommandListener commandListener = new CommandListener();
