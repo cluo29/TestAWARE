@@ -20,7 +20,7 @@ TestAWARE can also replay Audio data in wav.
 
 Also, testers can combine real-time and manipulated data.
 
-![alt text](dataSources.png "Data Fusion")
+![alt text](dataSource.png "Data Fusion")
 
 The replay simply sends data via Android Intent.
 
