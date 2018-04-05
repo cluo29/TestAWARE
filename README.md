@@ -26,7 +26,7 @@ The replay simply sends data via Android Intent.
 
 ![alt text](replay.jpg "Data Replay")
 
-The basic controls are simple. You can run tests without coding.
+The basic controls are simple. You can run tests without coding. For the feature of TestAWARE code library, see https://github.com/cluo29/TestAWARECodeLib.
 
 If you are interested in the mechanisms, please read the paper [1].
 
